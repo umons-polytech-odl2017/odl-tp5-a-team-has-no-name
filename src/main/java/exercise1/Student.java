@@ -1,8 +1,9 @@
 package exercise1;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a student.
@@ -16,8 +17,15 @@ public class Student {
      *
      * @throws NullPointerException if one of the parameter is null.
      */
-    public Student(String name, String registrationNumber) {
 
+    String name ;
+    String registrationNumber ;
+    Map<String, Integer>scoreCourse = new HashMap<>();
+
+
+    public Student(String name, String registrationNumber) {
+        this.name = requireNonNull(name, "name not null !") ;
+        this.registrationNumber = requireNonNull(registrationNumber, "registration not null !");
     }
 
     /**
@@ -29,6 +37,13 @@ public class Student {
      */
     public void setScore(String course, int score) {
 
+        scoreCourse.put(course, score);
+
+        requireNonNull(course, "course not null !");
+        if (score<0 || score>20) {
+            throw new IllegalArgumentException("Erreur : le score doit être entre 0 et 20 ! ");
+        }
+
     }
 
     /**
@@ -36,8 +51,9 @@ public class Student {
      *
      * @return the score if found, <code>OptionalInt#empty()</code> otherwise.
      */
-    public OptionalInt getScore(String course) {
-        return null;
+    public int getScore(String course) {
+        int score = scoreCourse.get(course);
+        return score ;
     }
 
     /**
@@ -46,7 +62,10 @@ public class Student {
      * @return the average score or 0 if there is none.
      */
     public double averageScore() {
-        return 0;
+
+        return scoreCourse.values().stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        //.orElse permet de retourner un double d'office
+        // Sinon on doit changer "public double averageScore" en "public OptionalDouble averageScore"
     }
 
     /**
@@ -55,7 +74,8 @@ public class Student {
      * @return the best scored course or <code>Optional#empty()</code> if there is none.
      */
     public Optional<String> bestCourse() {
-        return null;
+
+        return scoreCourse.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).map(Map.Entry::getKey).findFirst();
     }
 
     /**
@@ -64,7 +84,8 @@ public class Student {
      * @return the highest score or 0 if there is none.
      */
     public int bestScore() {
-        return 0;
+
+        return scoreCourse.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).mapToInt(Map.Entry::getValue).findFirst().orElse(0);
     }
 
     /**
@@ -79,20 +100,29 @@ public class Student {
      * Returns <code>true</code> if the student has an average score greater than or equal to 12.0 and has less than 3 failed courses.
      */
     public boolean isSuccessful() {
-        return false;
+
+        return averageScore() >= 12 ;
     }
 
     /**
      * Returns the set of courses for which the student has received a score, sorted by course name.
      */
-    public Set<String> attendedCourses() { return null; }
+    public Set<String> attendedCourses() {
+        return scoreCourse.keySet().stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+    }
 
     public String getName() {
-        return null;
+
+        return name;
     }
 
     public String getRegistrationNumber() {
-        return null;
+
+        return registrationNumber;
+    }
+
+    public Map<String, Integer> getScoreCourse() {
+        return scoreCourse;
     }
 
     @Override

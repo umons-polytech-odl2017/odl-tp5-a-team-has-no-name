@@ -50,14 +50,14 @@ public class StudentTest {
     public void getScore_with_scored_course() {
         Student theonGreyjoy = new Student("Theon Greyjoy", "123654");
         theonGreyjoy.setScore("loyalty", 2);
-        assertThat(theonGreyjoy.getScore("loyalty")).hasValue(2);
+        assertThat(theonGreyjoy.getScore("loyalty")).isEqualTo(2);
     }
 
     @Test
     public void getScore_with_unknown_course() {
         Student sansaStark = new Student("Sansa Stark", "425163");
         sansaStark.setScore("sewing", 20);
-        assertThat(sansaStark.getScore("politics")).isEmpty();
+        assertThat(sansaStark.getScore("politics")).isNull();
     }
 
     @Test
