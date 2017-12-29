@@ -3,12 +3,19 @@ package exercise2;
 import exercise1.DuplicateStudentException;
 import exercise1.Student;
 
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * A classroom gathers many distinct students.
  */
 public class Classroom {
+
+    Set<Student> students = new HashSet<>();
     /**
      * Adds a student to this classroom.
      *
@@ -17,6 +24,7 @@ public class Classroom {
      */
     public void addStudent(Student student) {
 
+        students.add(student);
     }
 
     /**
@@ -25,14 +33,16 @@ public class Classroom {
      * @return the average score of the students or 0 if there is none.
      */
     public double averageScore() {
-        return 0;
+
+        return students.stream().flatMapToInt(student -> student.getScoreCourse().values().stream().mapToInt(Integer::intValue)).average().orElse(0.0);
     }
 
     /**
      * Returns the number of students that are part of this classroom.
      */
     public int countStudents() {
-        return 0;
+
+        return students.size();
     }
 
     /**
@@ -56,6 +66,7 @@ public class Classroom {
      * @return a sorted list of students or an empty list.
      */
     public List<Student> successfulStudents() {
-        return null;
+
+        return students.stream().filter(Student::isSuccessful).sorted(Comparator.comparingDouble(Student::averageScore)).collect(Collectors.toList());
     }
 }
